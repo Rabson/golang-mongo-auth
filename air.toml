@@ -1,0 +1,24 @@
+# air.toml
+
+# The working directory of the Go application
+root = "."
+
+# The binary file path to be used
+bin = "tmp/air-bin/app"
+
+# Set the delay for reloading (in seconds)
+delay = 0
+
+# Watch .go files and restart the app when changes occur
+[watch]
+  include = ["\\.go$"]
+  exclude = ["\\.git", "tmp", "vendor"]
+
+# Optional: Specify a specific build command or custom build path
+[build]
+  cmd = "go build -o tmp/air-bin/app main.go"
+  bin = "tmp/air-bin/app"
+
+# Optional: Specify a custom start command (usually for a web server)
+[start]
+  cmd = "./tmp/air-bin/app"
