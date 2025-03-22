@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"net/http"
 
+	"golang-mongo-auth/models"
 	"golang-mongo-auth/utils"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,7 @@ import (
 )
 
 func RegisterUser(c *gin.Context) {
-	var user utils.User
+	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
@@ -30,13 +31,13 @@ func RegisterUser(c *gin.Context) {
 }
 
 func LoginUser(c *gin.Context) {
-	var creds utils.User
+	var creds models.User
 	if err := c.ShouldBindJSON(&creds); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
 	}
 
-	var user utils.User
+	var user models.User
 	err := utils.UserColl.FindOne(context.TODO(), bson.M{"email": creds.Email}).Decode(&user)
 	if err != nil || !utils.CheckPassword(user.Password, creds.Password) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
