@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Go Program",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go", // Path to the Go program (your entry point)
+            "env": {},
+            "args": []
+        }
+    ]
+}

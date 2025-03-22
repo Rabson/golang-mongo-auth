@@ -11,10 +11,10 @@ import (
 )
 
 func GetProfile(c *gin.Context) {
-	email, _ := c.Get("email")
+	userId, _ := c.Get("userId")
 	var user utils.User
 
-	err := utils.UserColl.FindOne(context.TODO(), bson.M{"email": email}).Decode(&user)
+	err := utils.UserColl.FindOne(context.TODO(), bson.M{"_id": userId}).Decode(&user)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return

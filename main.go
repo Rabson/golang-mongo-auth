@@ -33,9 +33,6 @@ func init() {
 	}
 	userColl = client.Database("testdb").Collection("users")
 	utils.SetUserCollection(userColl)
-
-	// Set secret key from environment variables
-	// utils.SetJWTKey(os.Getenv("JWT_SECRET"))
 }
 
 func main() {

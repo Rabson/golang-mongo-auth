@@ -25,7 +25,15 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("email", claims.Email)
+		ObjectId, ObjectIdErr := utils.StringToObjectId(claims.UserId)
+
+		if ObjectIdErr != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user"})
+			c.Abort()
+			return
+		}
+
+		c.Set("userId", ObjectId)
 		c.Next()
 	}
 }

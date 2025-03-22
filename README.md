@@ -95,7 +95,13 @@ Authorization: Bearer your-jwt-token
 ```
 
 
-## Installed dependies
+## Migration 
+```
+migrate create -ext -mongodb  -dir migration  <NAME>
+
+```
+
+## Installed dependencies
 ```
 
 go get -u github.com/cosmtrek/air
@@ -104,6 +110,8 @@ go get github.com/golang-jwt/jwt/v5
 go get go.mongodb.org/mongo-driver 
 go get golang.org/x/crypto/bcrypt
 go get github.com/joho/godotenv 
+go get github.com/golang-migrate/migrate/v4
+
 
 ```
 

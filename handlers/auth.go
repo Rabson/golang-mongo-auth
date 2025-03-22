@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/hex"
 	"net/http"
 
 	"golang-mongo-auth/utils"
@@ -42,6 +43,9 @@ func LoginUser(c *gin.Context) {
 		return
 	}
 
-	token, _ := utils.GenerateToken(user.Email)
+	var id string = hex.EncodeToString(user.ID[:])
+
+	token, _ := utils.GenerateToken(id)
+
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
