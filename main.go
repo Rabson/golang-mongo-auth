@@ -7,7 +7,7 @@ import (
 
 	"golang-mongo-auth/handlers"
 	"golang-mongo-auth/middleware"
-	"golang-mongo-auth/utils"
+	"golang-mongo-auth/repository"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -22,17 +22,17 @@ var (
 
 func init() {
 	// Load environment variables from .env file
-	if err := godotenv.Load(); err != nil {
+	if devEnvErr := godotenv.Load(); devEnvErr != nil {
 		log.Println("Warning: No .env file found")
 	}
 
-	var err error
-	client, err = mongo.Connect(context.TODO(), options.Client().ApplyURI(os.Getenv("MONGO_URI")))
-	if err != nil {
-		log.Fatal(err)
+	var mongoErr error
+	client, mongoErr = mongo.Connect(context.TODO(), options.Client().ApplyURI(os.Getenv("MONGO_URI")))
+	if mongoErr != nil {
+		log.Fatal(mongoErr)
 	}
-	userColl = client.Database("testdb").Collection("users")
-	utils.SetUserCollection(userColl)
+	database := client.Database(os.Getenv("DB_NAME"))
+	repository.SetUserRepository(database)
 }
 
 func main() {
