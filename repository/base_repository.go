@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // MongoRepository is a generic MongoDB repository
@@ -30,9 +31,11 @@ func (r *MongoRepository[T]) InsertOne(ctx context.Context, document *T) (*mongo
 }
 
 // FindOne finds a single document matching the filter
-func (r *MongoRepository[T]) FindOne(ctx context.Context, filter bson.M) (*T, error) {
+func (r *MongoRepository[T]) FindOne(ctx context.Context, filter bson.M, projection bson.M) (*T, error) {
 	var result T
-	err := r.collection.FindOne(ctx, filter).Decode(&result)
+
+	opts := options.FindOne().SetProjection(projection)
+	err := r.collection.FindOne(ctx, filter, opts).Decode(&result)
 	if err != nil {
 		return nil, err
 	}

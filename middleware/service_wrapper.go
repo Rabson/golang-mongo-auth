@@ -3,13 +3,14 @@ package middleware
 import (
 	"golang-mongo-auth/interfaces"
 	"golang-mongo-auth/models"
+	"golang-mongo-auth/utils"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func ServiceWrapper(serviceFunc func(map[string]interface{}, models.UserCtx) (interface{}, error, *int), validator interfaces.Validator) gin.HandlerFunc {
+func ServiceWrapper(serviceFunc func(map[string]interface{}, models.UserCtx) (interface{}, error, int), validator interfaces.Validator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userData, exists := c.Get("userCtx")
 		var user models.UserCtx
@@ -50,14 +51,14 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, models.UserCtx) (in
 		}
 
 		if result, err, statusCode := serviceFunc(requestData, user); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			utils.ErrorResponse(c, statusCode, err.Error())
 		} else {
-			c.JSON(func() int {
-				if statusCode != nil {
-					return *statusCode
+			utils.SuccessResponse(c, result, func() int {
+				if statusCode != 0 {
+					return statusCode
 				}
 				return http.StatusOK
-			}(), result)
+			}())
 		}
 	}
 }
