@@ -5,6 +5,7 @@ import (
 	"golang-mongo-auth/middleware"
 	"golang-mongo-auth/routers"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,6 +14,12 @@ func main() {
 	database.Init()
 
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Content-Type", "Authorization"},
+	}))
 
 	routers.SetupRoutes(r)
 

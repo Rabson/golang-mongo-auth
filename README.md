@@ -111,7 +111,7 @@ go get go.mongodb.org/mongo-driver
 go get golang.org/x/crypto/bcrypt
 go get github.com/joho/godotenv 
 go get github.com/golang-migrate/migrate/v4
-
+go get github.com/gin-contrib/cors
 
 ```
 
