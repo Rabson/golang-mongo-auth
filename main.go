@@ -25,5 +25,7 @@ func main() {
 
 	r.Use(middleware.ErrorHandler())
 
-	r.Run(":8080")
+	if err := r.Run(":8080"); err != nil {
+		panic(err)
+	}
 }

@@ -63,7 +63,9 @@ func TestHttpRequest(t *testing.T) {
 					}
 				}
 				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
+				if _, err := w.Write([]byte(tt.mockResponse)); err != nil {
+					t.Errorf("failed to write mock response: %v", err)
+				}
 			}))
 			defer mockServer.Close()
 

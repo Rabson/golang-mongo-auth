@@ -26,7 +26,10 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, models.UserCtx) (in
 
 		requestData := make(map[string]any)
 		if c.Request.Method == http.MethodGet {
-			c.Request.ParseForm()
+			if err := c.Request.ParseForm(); err != nil {
+				utils.ErrorResponse(c, http.StatusBadRequest, "Failed to parse form data")
+				return
+			}
 			for key, values := range c.Request.URL.Query() {
 				if len(values) > 0 {
 					requestData[key] = values[0]
@@ -34,7 +37,9 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, models.UserCtx) (in
 			}
 		} else if c.Request.Method == http.MethodPost || c.Request.Method == http.MethodPut || c.Request.Method == http.MethodPatch {
 			if err := c.ShouldBindJSON(&requestData); err != nil {
+				// if err := c.ShouldBindWith(&requestData, binding.FormMultipart); err != nil {
 				utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+				// c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"
 				return
 			}
 		}

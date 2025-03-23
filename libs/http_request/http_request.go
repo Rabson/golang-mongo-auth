@@ -33,5 +33,9 @@ func HttpRequest(method, url string, body []byte, headers map[string]string) (st
 		return "", fmt.Errorf("failed to read response body: %w", err)
 	}
 
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("request failed with status code %d: %s", resp.StatusCode, string(responseBody))
+	}
+
 	return string(responseBody), nil
 }

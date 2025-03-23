@@ -10,6 +10,9 @@ docker-build:
 docker-run:
 	docker run -d -p 8080:8080 --env-file .env golang_mongo_auth
 
+lint:
+	golangci-lint run 
+
 run:
 	go run main.go
 

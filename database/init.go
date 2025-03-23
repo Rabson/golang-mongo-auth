@@ -12,8 +12,7 @@ import (
 )
 
 var (
-	client   *mongo.Client
-	userColl *mongo.Collection
+	client *mongo.Client
 )
 
 func Init() {
