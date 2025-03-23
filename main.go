@@ -5,9 +5,8 @@ import (
 	"log"
 	"os"
 
-	"golang-mongo-auth/handlers"
-	"golang-mongo-auth/middleware"
 	"golang-mongo-auth/repository"
+	"golang-mongo-auth/routers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -37,9 +36,6 @@ func init() {
 
 func main() {
 	r := gin.Default()
-	r.POST("/register", handlers.RegisterUser)
-	r.POST("/login", handlers.LoginUser)
-	r.GET("/profile", middleware.AuthMiddleware(), handlers.GetProfile)
-
+	routers.SetupRoutes(r)
 	r.Run(":8080")
 }

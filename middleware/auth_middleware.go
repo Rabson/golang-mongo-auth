@@ -3,9 +3,10 @@ package middleware
 import (
 	"net/http"
 
-	"golang-mongo-auth/utils"
-
 	"github.com/gin-gonic/gin"
+
+	"golang-mongo-auth/models"
+	"golang-mongo-auth/utils"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -33,7 +34,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("userId", ObjectId)
+		c.Set("userCtx", models.UserCtx{UserId: ObjectId})
 		c.Next()
 	}
 }
