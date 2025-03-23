@@ -19,7 +19,7 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, models.UserCtx) (in
 			user, ok = userData.(models.UserCtx)
 			if !ok {
 				log.Println("Failed to cast userCtx to UserCtx")
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+				utils.ErrorResponse(c, http.StatusInternalServerError, "Something went wrong")
 				return
 			}
 		}
@@ -34,7 +34,7 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, models.UserCtx) (in
 			}
 		} else if c.Request.Method == http.MethodPost || c.Request.Method == http.MethodPut || c.Request.Method == http.MethodPatch {
 			if err := c.ShouldBindJSON(&requestData); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+				utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 				return
 			}
 		}
@@ -45,7 +45,7 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, models.UserCtx) (in
 
 		if validator != nil && requestData != nil {
 			if err := validator.Validate(requestData); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 				return
 			}
 		}

@@ -2,16 +2,17 @@ package routers
 
 import (
 	"golang-mongo-auth/middleware"
-	"golang-mongo-auth/services"
+	user_services "golang-mongo-auth/services/users"
 	"golang-mongo-auth/validators"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupUserRoutes(r *gin.Engine) {
-	userGroup := r.Group("/users")
+	routeGroup := r.Group("/users")
 	{
-		userGroup.GET("/:id?", middleware.AuthMiddleware(), middleware.ServiceWrapper(services.GetProfile, nil))
-		userGroup.PUT("/", middleware.AuthMiddleware(), middleware.ServiceWrapper(services.UpdateProfile, validators.UpdateProfileValidator{}))
+		routeGroup.GET("/details", middleware.AuthMiddleware(), middleware.ServiceWrapper(user_services.UserGetDetails, nil))
+		routeGroup.GET("/:id", middleware.AuthMiddleware(), middleware.ServiceWrapper(user_services.UserGetDetails, nil))
+		routeGroup.PUT("/", middleware.AuthMiddleware(), middleware.ServiceWrapper(user_services.UpdateUser, validators.UpdateProfileValidator{}))
 	}
 }
