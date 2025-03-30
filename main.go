@@ -1,9 +1,9 @@
 package main
 
 import (
-	"golang-mongo-auth/database"
-	"golang-mongo-auth/middleware"
-	"golang-mongo-auth/routers"
+	"golang-mongo-auth/internal/api/handlers"
+	"golang-mongo-auth/internal/api/middleware"
+	"golang-mongo-auth/pkg/common/database"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -21,7 +21,7 @@ func main() {
 		AllowHeaders:    []string{"Origin", "Content-Type", "Authorization"},
 	}))
 
-	routers.SetupRoutes(r)
+	handlers.SetupRoutes(r)
 
 	r.Use(middleware.ErrorHandler())
 
