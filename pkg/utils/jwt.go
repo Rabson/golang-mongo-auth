@@ -2,15 +2,16 @@ package utils
 
 import (
 	"errors"
+	"golang-mongo-auth/pkg/common/messages"
 	"golang-mongo-auth/pkg/common/types"
-	"os"
+	"golang-mongo-auth/pkg/config"
 	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtKey = []byte(os.Getenv("JWT_SECRET"))
+var jwtKey = []byte(config.GetJwtSecrets())
 
 type Claims struct {
 	UserId string     `json:"userId"`
@@ -49,13 +50,13 @@ func ParseToken(tokenString string) (*Claims, error) {
 
 func ValidateToken(tokenString string) (*Claims, error) {
 	if tokenString == "" {
-		return nil, errors.New("Missing token")
+		return nil, errors.New(messages.ErrMissingToken)
 	}
 
 	claims, err := ParseToken(tokenString)
 
 	if err != nil {
-		return nil, errors.New("Invalid user")
+		return nil, errors.New(messages.ErrInvalidToken)
 	}
 
 	return claims, nil

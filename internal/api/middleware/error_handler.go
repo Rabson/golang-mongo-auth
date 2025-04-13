@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"golang-mongo-auth/pkg/common/messages"
 	"golang-mongo-auth/pkg/utils"
 	"log"
 	"net/http"
@@ -15,13 +16,13 @@ func ErrorHandler() gin.HandlerFunc {
 		// Check for 404 errors
 		if c.Writer.Status() == http.StatusNotFound {
 			log.Printf("404 error: %d %s", c.Writer.Status(), c.Request.URL)
-			utils.ErrorResponse(c, http.StatusNotFound, "Resource not found")
+			utils.ErrorResponse(c, http.StatusNotFound, messages.ErrUserNotFound)
 		}
 
 		// Check for 500 errors
 		if len(c.Errors) > 0 {
 			log.Printf("500 error: %d %s", c.Writer.Status(), c.Request.URL)
-			utils.ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
+			utils.ErrorResponse(c, http.StatusInternalServerError, messages.ErrSomethingWentWrong)
 		}
 	}
 }

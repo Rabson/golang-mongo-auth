@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"golang-mongo-auth/pkg/common/messages"
 	"golang-mongo-auth/pkg/common/repository"
 	"golang-mongo-auth/pkg/common/types"
 	"log"
@@ -17,7 +18,7 @@ func UserGetDetails(data map[string]interface{}, userCtx types.UserCtx) (interfa
 		var objErr error
 		userId, objErr = primitive.ObjectIDFromHex(id)
 		if objErr != nil {
-			return nil, errors.New("Something went wrong"), 0
+			return nil, errors.New(messages.ErrSomethingWentWrong), 0
 		}
 	} else {
 		userId = userCtx.UserId
@@ -29,7 +30,7 @@ func UserGetDetails(data map[string]interface{}, userCtx types.UserCtx) (interfa
 
 	if foundUserErr != nil {
 		log.Println("UserGetDetails: Error finding user:", foundUserErr.Error())
-		return nil, errors.New("User not found"), 404
+		return nil, errors.New(messages.ErrUserNotFound), 404
 	}
 	return foundUser, nil, 0
 }

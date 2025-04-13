@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"golang-mongo-auth/pkg/common/messages"
 	"golang-mongo-auth/pkg/common/types"
 	"log"
 
@@ -36,7 +37,7 @@ func GetUserContext(c *gin.Context) (types.UserCtx, error) {
 		user, ok = userContext.(types.UserCtx)
 		if !ok {
 			log.Println("Failed to cast userCtx to UserCtx")
-			return types.UserCtx{}, errors.New("Failed to cast userCtx to UserCtx")
+			return types.UserCtx{}, errors.New(messages.ErrSomethingWentWrong)
 		}
 	}
 	return user, nil

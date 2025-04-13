@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"golang-mongo-auth/pkg/common/constants"
+	"golang-mongo-auth/pkg/common/messages"
 	"golang-mongo-auth/pkg/common/repository"
 	"golang-mongo-auth/pkg/common/types"
 
@@ -29,11 +30,11 @@ func RegisterUser(data map[string]interface{}, userCtx types.UserCtx) (interface
 
 	if foundUserErr != nil && foundUserErr.Error() != "mongo: no documents in result" {
 		log.Println("RegisterUser: Error finding user:", foundUserErr.Error())
-		return nil, errors.New("Something went wrong"), http.StatusInternalServerError
+		return nil, errors.New(messages.ErrSomethingWentWrong), http.StatusInternalServerError
 	}
 
 	if foundUser != nil {
-		return nil, errors.New("User already exists"), http.StatusConflict
+		return nil, errors.New(messages.ErrEmailAlreadyExists), http.StatusConflict
 	}
 
 	hashedPassword, _ := utils.HashPassword(user.Password)
@@ -44,7 +45,7 @@ func RegisterUser(data map[string]interface{}, userCtx types.UserCtx) (interface
 
 	if createUserErr != nil {
 		log.Println("RegisterUser: Error creating user:", createUserErr.Error())
-		return nil, errors.New("Failed to create user"), http.StatusInternalServerError
+		return nil, errors.New(messages.ErrOperationFailed), http.StatusInternalServerError
 
 	}
 

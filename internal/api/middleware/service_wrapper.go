@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"golang-mongo-auth/internal/interfaces"
+	"golang-mongo-auth/pkg/common/messages"
 	"golang-mongo-auth/pkg/common/types"
 	"golang-mongo-auth/pkg/utils"
 	"net/http"
@@ -20,7 +21,7 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, types.UserCtx) (int
 		requestData := make(map[string]any)
 		if c.Request.Method == http.MethodGet {
 			if err := c.Request.ParseForm(); err != nil {
-				utils.ErrorResponse(c, http.StatusBadRequest, "Failed to parse form data")
+				utils.ErrorResponse(c, http.StatusBadRequest, messages.ErrInvalidData)
 				return
 			}
 			for key, values := range c.Request.URL.Query() {

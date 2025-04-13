@@ -13,4 +13,6 @@ type Module string
 
 type Action string
 
+type HttpMethod string
+
 type RoleModuleAction map[Role]map[Module][]Action

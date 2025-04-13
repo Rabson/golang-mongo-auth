@@ -9,6 +9,7 @@ import (
 	modelUser "golang-mongo-auth/pkg/user/models"
 
 	"golang-mongo-auth/pkg/common/constants"
+	"golang-mongo-auth/pkg/common/messages"
 	"golang-mongo-auth/pkg/common/repository"
 	"golang-mongo-auth/pkg/common/types"
 	"golang-mongo-auth/pkg/utils"
@@ -21,14 +22,14 @@ func Login(data map[string]interface{}, userCtx types.UserCtx) (interface{}, err
 
 	loginRole, ok := data["loginRole"].(types.Role)
 	if !ok {
-		return nil, errors.New("Invalid login role"), http.StatusBadRequest
+		return nil, errors.New(messages.ErrInvalidRole), http.StatusUnauthorized
 	}
 
 	email, emailOk := data["email"].(string)
 	password, passOk := data["password"].(string)
 
 	if !emailOk || !passOk {
-		return nil, errors.New("Invalid data"), http.StatusBadRequest
+		return nil, errors.New(messages.ErrInvalidData), http.StatusBadRequest
 	}
 
 	var foundUser *modelUser.User
@@ -49,11 +50,11 @@ func Login(data map[string]interface{}, userCtx types.UserCtx) (interface{}, err
 
 	if foundErr != nil && foundErr.Error() != "mongo: no documents in result" {
 		log.Println("RegisterUser: Error finding user:", foundErr.Error())
-		return nil, errors.New("Something went wrong"), http.StatusInternalServerError
+		return nil, errors.New(messages.ErrSomethingWentWrong), http.StatusInternalServerError
 	}
 
 	if foundUser == nil && foundAdmin == nil {
-		return nil, errors.New("Email not found"), http.StatusNotFound
+		return nil, errors.New(messages.ErrInvalidCredentials), http.StatusUnauthorized
 	}
 
 	var checkPassword string
@@ -65,7 +66,7 @@ func Login(data map[string]interface{}, userCtx types.UserCtx) (interface{}, err
 	}
 
 	if !utils.CheckPassword(checkPassword, password) {
-		return nil, errors.New("Invalid credentials"), http.StatusForbidden
+		return nil, errors.New(messages.ErrInvalidCredentials), http.StatusUnauthorized
 	}
 
 	var id string = hex.EncodeToString(foundUser.ID[:])
