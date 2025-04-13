@@ -6,6 +6,7 @@ import (
 	"golang-mongo-auth/pkg/common/database"
 	"golang-mongo-auth/pkg/common/repository"
 	"golang-mongo-auth/pkg/config"
+	"golang-mongo-auth/pkg/utils"
 	"log"
 
 	"github.com/gin-contrib/cors"
@@ -19,6 +20,8 @@ func main() {
 	}
 
 	db := database.Init(config.GetMongoURI(), config.GetDbName())
+
+	utils.CasbinLoad(config.GetMongoURI(), config.GetDbName())
 
 	repository.SetRepositories(db)
 
