@@ -13,8 +13,8 @@ import (
 func UserGetDetails(data map[string]interface{}, userCtx types.UserCtx) (interface{}, error, int) {
 
 	var userId primitive.ObjectID
-	id, ok := data["id"].(string)
-	if ok {
+
+	if id, ok := data["id"].(string); ok {
 		var objErr error
 		userId, objErr = primitive.ObjectIDFromHex(id)
 		if objErr != nil {
@@ -24,9 +24,7 @@ func UserGetDetails(data map[string]interface{}, userCtx types.UserCtx) (interfa
 		userId = userCtx.UserId
 	}
 
-	objectID := userId
-
-	foundUser, foundUserErr := repository.UserFindById(objectID, nil)
+	foundUser, foundUserErr := repository.UserFindById(userId, nil)
 
 	if foundUserErr != nil {
 		log.Println("UserGetDetails: Error finding user:", foundUserErr.Error())

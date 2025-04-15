@@ -5,9 +5,13 @@ import (
 	"golang-mongo-auth/pkg/common/messages"
 	"golang-mongo-auth/pkg/common/types"
 	"golang-mongo-auth/pkg/utils"
+	"log"
 	"net/http"
 
+	"strings"
+
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 func ServiceWrapper(serviceFunc func(map[string]interface{}, types.UserCtx) (interface{}, error, int), validator interfaces.Validator) gin.HandlerFunc {
@@ -30,12 +34,40 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, types.UserCtx) (int
 				}
 			}
 		} else if c.Request.Method == http.MethodPost || c.Request.Method == http.MethodPut || c.Request.Method == http.MethodPatch {
-			if err := c.ShouldBindJSON(&requestData); err != nil {
-				// if err := c.ShouldBindWith(&requestData, binding.FormMultipart); err != nil {
-				utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
-				// c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"
+			contentType := c.GetHeader("Content-Type")
+			if contentType == "application/json" {
+				if err := c.ShouldBindJSON(&requestData); err != nil {
+					utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+					return
+				}
+			} else if contentType == "application/x-www-form-urlencoded" || strings.Contains(contentType, "multipart/form-data") {
+				if err := c.ShouldBindWith(&requestData, binding.FormMultipart); err != nil {
+					utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+					return
+				}
+
+				keys := validator.GetKeys()
+
+				if len(keys) > 0 {
+					for _, key := range keys {
+						if value, ok := c.GetPostForm(key); ok {
+							requestData[key] = value
+						}
+					}
+
+					for _, key := range keys {
+						if value, err := c.FormFile(key); err == nil {
+							log.Println("File found:", value.Filename)
+							requestData[key] = value
+						}
+					}
+				}
+
+			} else {
+				utils.ErrorResponse(c, http.StatusUnsupportedMediaType, "Unsupported Content-Type")
 				return
 			}
+
 		}
 
 		for _, param := range c.Params {

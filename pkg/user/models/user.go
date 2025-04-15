@@ -12,6 +12,7 @@ type User struct {
 	Email    string             `bson:"email" json:"email"`
 	Password string             `bson:"password" json:"password"`
 	Name     string             `bson:"name" json:"name"`
+	Profile  string             `bson:"profile" json:"profile"`
 	Role     types.Role         `bson:"role" json:"role"` // ADMIN or USER
 }
 

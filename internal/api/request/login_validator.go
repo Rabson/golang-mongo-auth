@@ -25,3 +25,7 @@ func (v LoginValidator) Validate(data map[string]interface{}) error {
 		validation.Field(&v.Password, validation.Required.Error("Password is required")),
 	)
 }
+
+func (v LoginValidator) GetKeys() []string {
+	return []string{"email", "password"}
+}

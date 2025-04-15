@@ -32,3 +32,7 @@ func (v RegisterValidator) Validate(data map[string]interface{}) error {
 		validation.Field(&v.Name, validation.Required.Error("Name is required")),
 	)
 }
+
+func (v RegisterValidator) GetKeys() []string {
+	return []string{"email", "password", "name"}
+}

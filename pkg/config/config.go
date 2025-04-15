@@ -25,3 +25,20 @@ func GetDbName() string {
 func GetJwtSecrets() string {
 	return GetEnv("JWT_SECRET", "")
 }
+
+func GetS3Region() string {
+	return GetEnv("AWS_REGION", "")
+}
+func GetS3AccessKeyId() string {
+	return GetEnv("AWS_ACCESS_KEY_ID", "")
+}
+func GetS3SecretAccessKey() string {
+	return GetEnv("AWS_SECRET_ACCESS_KEY", "")
+}
+
+func GetS3RBucket() string {
+	return GetEnv("BUCKET_NAME", "")
+}
+func GetS3Endpoint() string {
+	return "https://" + GetEnv("AWS_REGION", "") + ".linodeobjects.com"
+}

@@ -1,10 +1,12 @@
 package service
 
 import (
-	"golang-mongo-auth/internal/api/request"
+	"errors"
 	"golang-mongo-auth/pkg/common/repository"
 	"golang-mongo-auth/pkg/common/types"
+	"golang-mongo-auth/pkg/fileManager"
 	"log"
+	"mime/multipart"
 	"net/http"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,25 +14,35 @@ import (
 
 func UpdateUser(data map[string]interface{}, userCtx types.UserCtx) (interface{}, error, int) {
 
-	var updateData request.UpdateProfileValidator
-
-	// Validate and parse the input data
-	if err := updateData.Validate(data); err != nil {
-		log.Println("UpdateProfile: Validation error:", err.Error())
-		return nil, err, http.StatusBadRequest
+	type UpdateData struct {
+		Name    string
+		Profile string
 	}
 
-	// Handle profile picture upload if provided
-	if profile, ok := data["profile"].(string); ok && profile != "" {
-		uploadedURL, uploadErr := uploadProfile(profile, userCtx.UserId.String())
+	type Data struct {
+		data map[string]interface{}
+	}
+
+	var updateData UpdateData
+
+	if name, ok := data["name"].(string); ok && name != "" {
+		updateData.Name = name
+	}
+
+	if profile, ok := data["profile"].(*multipart.FileHeader); ok && profile != nil {
+		uploadedURL, uploadErr := fileManager.UploadFile(
+			fileManager.FILE_TYPE_PROFILE,
+			profile,
+			userCtx.UserId.Hex()+"_"+profile.Filename,
+		)
+
 		if uploadErr != nil {
 			log.Println("UpdateProfile: Error uploading profile picture:", uploadErr.Error())
-			return nil, uploadErr, http.StatusInternalServerError
+			return nil, errors.New("error uploading profile picture"), http.StatusInternalServerError
 		}
 		updateData.Profile = uploadedURL
 	}
 
-	// Update the user data in the database
 	updateErr := repository.UserUpdateById(userCtx.UserId, bson.M{
 		"name":    updateData.Name,
 		"profile": updateData.Profile,

@@ -15,5 +15,6 @@ func SetupUserRoutes(r *gin.RouterGroup) {
 		routeGroup.GET("/details", middleware.AuthMiddleware(constants.MODULE_USER), middleware.ServiceWrapper(service.UserGetDetails, nil))
 		routeGroup.GET("/:id", middleware.AuthMiddleware(constants.MODULE_USER), middleware.ServiceWrapper(service.UserGetDetails, nil))
 		routeGroup.PUT("/", middleware.AuthMiddleware(constants.MODULE_USER), middleware.ServiceWrapper(service.UpdateUser, request.UpdateProfileValidator{}))
+		routeGroup.PUT("/:id", middleware.AuthMiddleware(constants.MODULE_USER), middleware.ServiceWrapper(service.UpdateUser, request.UpdateProfileValidator{}))
 	}
 }
