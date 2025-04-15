@@ -1,15 +1,13 @@
 package main
 
 import (
-	"golang-mongo-auth/internal/api/handlers"
-	"golang-mongo-auth/internal/api/middleware"
-	"golang-mongo-auth/pkg/common/database"
-	"golang-mongo-auth/pkg/common/repository"
-	"golang-mongo-auth/pkg/config"
+	"golang-mongo-auth/cmd"
+	server "golang-mongo-auth/internal/api"
 	"log"
+	"os"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	"github.com/urfave/cli/v2"
+
 	"github.com/joho/godotenv"
 )
 
@@ -18,24 +16,18 @@ func main() {
 		log.Println("Warning: No .env file found")
 	}
 
-	db := database.Init(config.GetMongoURI(), config.GetDbName())
+	app := &cli.App{
+		Name:     "cmd",
+		Usage:    "Seed DB or run server",
+		Commands: cmd.SeedCmd,
+		Action: func(c *cli.Context) error {
+			log.Println("Starting Gin server...")
+			server.Start()
+			return nil
+		},
+	}
 
-	repository.SetRepositories(db)
-
-	r := gin.Default()
-
-	r.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
-		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:    []string{"Origin", "Content-Type", "Authorization"},
-	}))
-
-	handlers.SetupRoutes(r)
-
-	r.Use(middleware.ErrorHandler())
-
-	port := config.GetPort()
-	if err := r.Run(":" + port); err != nil {
-		panic(err)
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
 }

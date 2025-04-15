@@ -3,9 +3,12 @@ package request
 import validation "github.com/go-ozzo/ozzo-validation/v4"
 
 type RegisterValidator struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Name     string `json:"name"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=8,max=20"`
+	// Password string `json:"password" binding:"required,min=8,max=20,eqfield=ConfirmPassword"`
+	// ConfirmPassword string `json:"confirm_password" binding:"required,min=8,max=20"`
+	// ConfirmPassword string `json:"confirm_password" binding:"required,min=8,max=20,eqfield=Password"`
+	Name string `json:"name" binding:"required,min=4,max=20"`
 }
 
 func (v RegisterValidator) Validate(data map[string]interface{}) error {

@@ -2,7 +2,9 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"golang-mongo-auth/pkg/user/models"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -37,14 +39,48 @@ func UserFindById(id primitive.ObjectID, projection bson.M) (*models.User, error
 }
 
 func UserCreate(user models.User) error {
+	now := time.Now()
+	user.CreatedAt = now
+	user.UpdatedAt = now
 	_, err := UserRepo.InsertOne(context.TODO(), &user)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-func UserUpdateById(id primitive.ObjectID, user bson.M) error {
-	_, err := UserRepo.UpdateOne(context.TODO(), bson.M{"_id": id}, user)
+func UserUpdateById(id primitive.ObjectID, user models.User) error {
+	var updateData = bson.M{}
+
+	if user.Role != "" {
+		updateData["role"] = user.Role
+	}
+	if user.Name != "" {
+		updateData["name"] = user.Name
+	}
+
+	if user.Profile != "" {
+		updateData["profile"] = user.Profile
+	}
+	if user.Email != "" {
+		updateData["email"] = user.Email
+	}
+	if user.Password != "" {
+		updateData["password"] = user.Password
+	}
+	if user.CreatedAt != (time.Time{}) {
+		updateData["createdAt"] = user.CreatedAt
+	}
+
+	if len(updateData) == 0 {
+		return errors.New("no data to update")
+	}
+
+	updateData["updatedAt"] = time.Now()
+
+	update := bson.M{
+		"$set": updateData,
+	}
+	_, err := UserRepo.UpdateOne(context.TODO(), bson.M{"_id": id}, update)
 
 	if err != nil {
 		return err

@@ -19,7 +19,7 @@ import (
 // }
 
 type UpdateProfileValidator struct {
-	Name    string               `json:"name"`
+	Name    string               `json:"name" binding:"required,min=4,max=20"`
 	Profile multipart.FileHeader `json:"profile"`
 }
 

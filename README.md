@@ -115,6 +115,8 @@ go get github.com/gin-contrib/cors
 
 ```
 
+## Seed
+make seed module=<seed_cmd_name>
 
 ## Notes
 - Ensure MongoDB is running before starting the server.

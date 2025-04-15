@@ -23,6 +23,13 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, types.UserCtx) (int
 		}
 
 		requestData := make(map[string]any)
+
+		if len(c.Params) > 0 {
+			for _, param := range c.Params {
+				requestData[param.Key] = param.Value
+			}
+		}
+
 		if c.Request.Method == http.MethodGet {
 			if err := c.Request.ParseForm(); err != nil {
 				utils.ErrorResponse(c, http.StatusBadRequest, messages.ErrInvalidData)
@@ -33,7 +40,7 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, types.UserCtx) (int
 					requestData[key] = values[0]
 				}
 			}
-		} else if c.Request.Method == http.MethodPost || c.Request.Method == http.MethodPut || c.Request.Method == http.MethodPatch {
+		} else if c.Request.Method == http.MethodPost || c.Request.Method == http.MethodPut || c.Request.Method == http.MethodPatch || c.Request.Method == http.MethodDelete {
 			contentType := c.GetHeader("Content-Type")
 			if contentType == "application/json" {
 				if err := c.ShouldBindJSON(&requestData); err != nil {
@@ -68,10 +75,6 @@ func ServiceWrapper(serviceFunc func(map[string]interface{}, types.UserCtx) (int
 				return
 			}
 
-		}
-
-		for _, param := range c.Params {
-			requestData[param.Key] = param.Value
 		}
 
 		if validator != nil && requestData != nil {

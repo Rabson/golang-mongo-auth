@@ -39,19 +39,21 @@ func AuthMiddleware(module types.Module) gin.HandlerFunc {
 			return
 		}
 
-		allowedActions, exists := constants.RoleModuleActions[claims.Role][module]
-		if !exists {
-			utils.ErrorResponse(c, http.StatusForbidden, messages.ErrInvalidRole)
-			return
-		}
+		// allowedActions, exists := constants.roleModuleActions[claims.Role][module]
+		// if !exists {
+		// 	utils.ErrorResponse(c, http.StatusForbidden, messages.ErrInvalidRole)
+		// 	return
+		// }
 
-		isAllowed := false
-		for _, allowedAction := range allowedActions {
-			if allowedAction == action {
-				isAllowed = true
-				break
-			}
-		}
+		// isAllowed := false
+		// for _, allowedAction := range allowedActions {
+		// 	if allowedAction == action {
+		// 		isAllowed = true
+		// 		break
+		// 	}
+		// }
+
+		isAllowed := utils.ValidateCasbin(string(claims.Role), module, action)
 
 		if !isAllowed {
 			utils.ErrorResponse(c, http.StatusForbidden, messages.ErrAccessDenied)

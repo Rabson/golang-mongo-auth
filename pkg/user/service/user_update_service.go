@@ -5,11 +5,10 @@ import (
 	"golang-mongo-auth/pkg/common/repository"
 	"golang-mongo-auth/pkg/common/types"
 	"golang-mongo-auth/pkg/fileManager"
+	"golang-mongo-auth/pkg/user/models"
 	"log"
 	"mime/multipart"
 	"net/http"
-
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 func UpdateUser(data map[string]interface{}, userCtx types.UserCtx) (interface{}, error, int) {
@@ -17,10 +16,6 @@ func UpdateUser(data map[string]interface{}, userCtx types.UserCtx) (interface{}
 	type UpdateData struct {
 		Name    string
 		Profile string
-	}
-
-	type Data struct {
-		data map[string]interface{}
 	}
 
 	var updateData UpdateData
@@ -43,9 +38,9 @@ func UpdateUser(data map[string]interface{}, userCtx types.UserCtx) (interface{}
 		updateData.Profile = uploadedURL
 	}
 
-	updateErr := repository.UserUpdateById(userCtx.UserId, bson.M{
-		"name":    updateData.Name,
-		"profile": updateData.Profile,
+	updateErr := repository.UserUpdateById(userCtx.UserId, models.User{
+		Name:    updateData.Name,
+		Profile: updateData.Profile,
 	})
 
 	if updateErr != nil {

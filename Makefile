@@ -4,6 +4,16 @@ hello:
 build:
 	go build -o bin/main cmd/app/main.go
 
+seed:
+	go run main.go seed $(module) --dry-run
+
+clean:
+	go mod tidy
+	go mod vendor
+	go clean
+	rm -rf bin
+	rm -rf vendor
+
 dev:
 	air
 
